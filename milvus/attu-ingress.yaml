@@ -1,0 +1,49 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Ingress for Attu (web UI) and MinIO console
+#
+# Minikube setup:
+#   1. Enable ingress addon:
+#      minikube addons enable ingress
+#   2. Get minikube IP:
+#      minikube ip   (e.g. 192.168.49.2)
+#   3. Add to /etc/hosts:
+#      192.168.49.2  attu.milvus.local
+#      192.168.49.2  minio.milvus.local
+#   4. Open http://attu.milvus.local in browser
+#
+# GKE setup:
+#   - Replace hosts with your real domain (e.g. attu.yourdomain.com)
+#   - Ensure nginx-ingress or GKE Ingress controller is installed
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: milvus-ingress
+  namespace: milvus
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: attu.milvus.local        # Change to your domain on GKE
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: attu
+            port:
+              number: 3000
+  - host: minio.milvus.local       # MinIO console — change to your domain on GKE
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: minio
+            port:
+              number: 9001

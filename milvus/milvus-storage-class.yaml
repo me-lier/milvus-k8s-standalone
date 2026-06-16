@@ -1,0 +1,19 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# reclaimPolicy: Retain — the underlying disk is NOT deleted when a PVC is
+# removed, so data survives pod restarts, re-deployments, or accidental deletion.
+#
+# Switch the provisioner based on your environment:
+#   Minikube  →  k8s.io/minikube-hostpath  (current)
+#   GKE       →  pd.csi.storage.gke.io     (uncomment + comment out minikube line)
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: retain-pd
+provisioner: k8s.io/minikube-hostpath    # Minikube
+# provisioner: pd.csi.storage.gke.io    # GKE — uncomment and comment out above
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+# parameters:                            # GKE only — uncomment if using pd.csi.storage.gke.io
+#   type: pd-balanced                    # Options: pd-standard | pd-balanced | pd-ssd

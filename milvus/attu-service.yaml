@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: attu
+  namespace: milvus
+spec:
+  # Minikube: access via `minikube service attu -n milvus`
+  # GKE:      change to LoadBalancer
+  type: NodePort
+  selector:
+    app: attu
+  ports:
+  - name: web
+    port: 3000
+    targetPort: 3000
